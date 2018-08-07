@@ -19,14 +19,28 @@ In ths lab:
 Prerequisites
 ====================
 
-Readers are assumed to have your own [AWS EKS Cluster](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and at least one node runs on it. A PostgreSQL RDS is also required in this tutorial.
+Readers are assumed to have your own [AWS EKS Cluster](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and at least one node runs on it (The node should have a public IP). A PostgreSQL RDS that can be accessible by node is also required in this tutorial.
 - - -
 
 # Containerized Application
 
 ```bash
-kubectl run 
+kubectl run sample --image=leyi/server_sample:latest --env="DB_URL=${url}:${port}/${db_name}" --env="DB_USERNAME=${username}" --env="DB_PASSWORD=${password}"
 ```
+```bash
+kubectl expose deployment sample --name=sample --port=80 --target-port=8080 --type=NodePort
+```
+```bash
+kubectl get service sample
+```
+Then you can access the **http://PublicIP:NodePort/api/cars** via Postman, in GET method and POST method.
+
+A POST method body sample is like:
+
+  {
+   "brand":"acura",
+   "model": "XE"
+  }
 
 # Develop and test Lambda function
 

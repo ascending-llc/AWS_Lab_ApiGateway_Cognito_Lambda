@@ -36,7 +36,7 @@ kubectl run sample --image=leyi/server_sample:latest --env="DB_URL=${url}:${port
 kubectl expose deployment sample --name=sample --port=80 --target-port=8080 --type=NodePort
 ```
 
-### Record the corresponding NodePort
+### Get the corresponding NodePort
 ```bash
 kubectl get service sample
 ```
@@ -51,6 +51,15 @@ A POST method body sample is like:
   }
 ```
 # Develop and test Lambda function
+
+Now, a new feature, for example a public IP query, needs to be added into the existing server. It can be done by lambda function.
+
+```bash
+sam local generate-event api > api_event.json
+```
+```bash
+sam local start-api
+```
 
 # Integrate ApiGateway and Lambda function with Cloudformation
 

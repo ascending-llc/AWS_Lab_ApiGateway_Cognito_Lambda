@@ -64,6 +64,10 @@ In this simple case, the api returns visitors' IP address.
 
 # Integrate ApiGateway and Lambda function with Cloudformation
 
-Deploy the **Api_Lambda.yaml** file in cloudformation folder with AWS CloudFormation. An Invoke URL will be found in Outputs Part, which will trigger lambda function and return visitors' current IP address.
+Deploy the **ApiGateway_Lambda.yaml** file in cloudformation folder with AWS CloudFormation. An Invoke URL will be found in Outputs Part, which will trigger lambda function and return visitors' current IP address.
 
 # Leverage Cognito as sign-up and sign-in tools
+
+### Add AWS Cognito as authorizor
+
+Update current Cloudformation Template with **ApiGateway_Lambda_Cognito.yaml**, try revisiting the URL and you will get an unauthorized message.

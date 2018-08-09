@@ -48,9 +48,8 @@ Resources:
       - SampleLambda
     Type: AWS::ApiGateway::Method
     Properties:
-      AuthorizationType: NONE
-      # AuthorizationType: COGNITO_USER_POOLS
-      # AuthorizerId: !Ref ApiAuthorizer
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref ApiAuthorizer
       HttpMethod: GET
       Integration: 
         Type: AWS_PROXY
@@ -64,23 +63,6 @@ Resources:
                  - /invocations
       ResourceId: !Ref ApiResource
       RestApiId: !Ref RestApi
-  # ApiUserPool:
-  #   Type: AWS::Cognito::UserPool
-  #   Properties:
-  #     UserPoolName: CospointUserPool
-  # ApiIdentityPool:
-  #   Type: AWS::Cognito::IdentityPool
-  #   Properties:
-  #     AllowUnauthenticatedIdentities: false
-  # ApiAuthorizer:
-  #   Type: AWS::ApiGateway::Authorizer
-  #   Properties:
-  #     Name: ApiAuthorizer
-  #     RestApiId: !Ref TestApi
-  #     Type: COGNITO_USER_POOLS
-  #     ProviderARNs: 
-  #       - !GetAtt ApiUserPool.Arn
-  #     IdentitySource: method.request.header.Authorization
   ApiResource:
     Type: AWS::ApiGateway::Resource
     Properties:
@@ -90,16 +72,37 @@ Resources:
   ApiStage:
     Type: AWS::ApiGateway::Stage
     Properties:
-      DeploymentId: !Ref ApiDeployment
+      DeploymentId: !Ref NewApiDeployment
       RestApiId: !Ref RestApi
       StageName: ip
-  ApiDeployment:
+  NewApiDeployment:
     DependsOn:
       - ApiMethod
       - ApiResource
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId: !Ref RestApi
+  ApiUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: CospointUserPool
+  ApiUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties: 
+      UserPoolId: !Ref ApiUserPool
+  ApiIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      AllowUnauthenticatedIdentities: false
+  ApiAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: ApiAuthorizer
+      RestApiId: !Ref RestApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs: 
+        - !GetAtt ApiUserPool.Arn
+      IdentitySource: method.request.header.Authorization
 Outputs:
   InvokeURL:
     Value: !Join
@@ -109,3 +112,15 @@ Outputs:
                - .execute-api.
                - !Ref AWS::Region
                - .amazonaws.com/ip/address
+  UserPoolId:
+    Value: !Ref ApiUserPool
+  ClientId:
+    Value: !Ref ApiUserPoolClient
+  IdentityPoolId:
+    Value: !Ref ApiIdentityPool
+  SignUpPage:
+    Value: !Join
+             - ''
+             - - https://frugalops.auth.us-east-1.amazoncognito.com/login?response_type=code&client_id=
+               - !Ref ApiUserPoolClient
+               - '&redirect_uri=https://www.frugalops.com'

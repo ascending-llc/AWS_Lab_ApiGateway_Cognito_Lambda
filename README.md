@@ -45,21 +45,22 @@ Then you can access the **http://${PublicIP}:${NodePort}/api/cars** via Postman,
 A POST method body sample is like:
 
 ```json
-  {
-   "brand":"acura",
-   "model": "XE"
-  }
+ {
+ 	"brand":"acura",
+ 	"model": "XE"
+ }
 ```
 # Develop and test Lambda function
 
 Now, a new feature, for example a public IP query, needs to be added into the existing server. It can be done by lambda function.
 
-```bash
-sam local generate-event api > api_event.json
-```
+Please install [SAM](https://github.com/awslabs/aws-sam-cli) and work in the **./lambda/** directory. The sam local tool will work on [template.yml](https://raw.githubusercontent.com/overtureLLC/AWS_Lab_ApiGateway_Cognito_Lambda/master/lambda/template.yaml) in current directory.
+
+You can start api locally on http://127.0.0.1:3000/ with following command, which has already been integrted with lambda function.
 ```bash
 sam local start-api
 ```
+In this simple case, the api returns visitors' IP address.
 
 # Integrate ApiGateway and Lambda function with Cloudformation
 

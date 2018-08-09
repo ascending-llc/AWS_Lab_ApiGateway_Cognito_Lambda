@@ -54,7 +54,7 @@ A POST method body sample is like:
 
 Now, a new feature, for example a public IP query, needs to be added into the existing server. It can be done by lambda function.
 
-Please install [SAM](https://github.com/awslabs/aws-sam-cli) and work in the **./lambda/** directory. The sam local tool will work on [template.yml](https://raw.githubusercontent.com/overtureLLC/AWS_Lab_ApiGateway_Cognito_Lambda/master/lambda/template.yaml) in current directory.
+Please install [SAM](https://github.com/awslabs/aws-sam-cli) and work under the **./lambda/** directory. The sam local tool will work on [template.yml](https://raw.githubusercontent.com/overtureLLC/AWS_Lab_ApiGateway_Cognito_Lambda/master/lambda/template.yaml) in current directory.
 
 You can start api locally on http://127.0.0.1:3000/ with following command, which has already been integrted with lambda function.
 ```bash

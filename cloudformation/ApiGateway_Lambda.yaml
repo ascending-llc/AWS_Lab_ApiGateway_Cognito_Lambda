@@ -1,0 +1,92 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create an intergrated ApiGateway with Lambda function.
+Resources:
+  LambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+  SampleLambda:
+    Type: AWS::Lambda::Function
+    Properties: 
+      Timeout: 60
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+            return {
+              'statusCode': 200,
+              'body': 'My IP address is ' + event["requestContext"]["identity"]["sourceIp"],
+              'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+              },
+            }
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.6
+  PermissionForApiToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:*
+      FunctionName: !Ref SampleLambda
+      Principal: apigateway.amazonaws.com
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Ref AWS::StackName
+  ApiMethod:
+    DependsOn:
+      - SampleLambda
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration: 
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Join
+               - ''
+               - - 'arn:aws:apigateway:'
+                 - !Ref AWS::Region
+                 - :lambda:path/2015-03-31/functions/
+                 - !GetAtt SampleLambda.Arn
+                 - /invocations
+      ResourceId: !Ref ApiResource
+      RestApiId: !Ref RestApi
+  ApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt RestApi.RootResourceId
+      PathPart: address
+      RestApiId: !Ref RestApi
+  ApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref ApiDeployment
+      RestApiId: !Ref RestApi
+      StageName: ip
+  ApiDeployment:
+    DependsOn:
+      - ApiMethod
+      - ApiResource
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref RestApi
+Outputs:
+  InvokeURL:
+    Value: !Join
+             - ''
+             - - https://
+               - !Ref RestApi
+               - .execute-api.
+               - !Ref AWS::Region
+               - .amazonaws.com/ip/address

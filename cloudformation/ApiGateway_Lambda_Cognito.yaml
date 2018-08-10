@@ -85,7 +85,7 @@ Resources:
   ApiUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UserPoolName: CospointUserPool
+      UserPoolName: !Ref AWS::StackName
   ApiUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties: 

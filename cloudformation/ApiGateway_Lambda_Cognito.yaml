@@ -3,7 +3,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Create an intergrated ApiGateway with Lambda function.
 Resources:
   LambdaRole:
-    Type: "AWS::IAM::Role"
+    Type: AWS::IAM::Role
     Properties: 
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
@@ -93,7 +93,46 @@ Resources:
   ApiIdentityPool:
     Type: AWS::Cognito::IdentityPool
     Properties:
+      CognitoIdentityProviders: 
+        - ClientId: !Ref ApiUserPoolClient
+          ProviderName: !GetAtt ApiUserPool.ProviderName
       AllowUnauthenticatedIdentities: false
+  CognitoRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Federated: 
+                - "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            # Condition:
+            #   StringEquals:
+            #     - "cognito-identity.amazonaws.com:aud": !Ref ApiIdentityPool
+            #   ForAnyValue:StringLike:
+            #     - "cognito-identity.amazonaws.com:amr": "authenticated"
+      Policies:
+        - 
+          PolicyName: "CognitoRolePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - mobileanalytics:PutEvents
+                  - cognito-sync:*
+                Resource: "*"
+  RoleAttachment:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties: 
+      IdentityPoolId: !Ref ApiIdentityPool
+      Roles:
+        authenticated: !GetAtt CognitoRole.Arn
   ApiAuthorizer:
     Type: AWS::ApiGateway::Authorizer
     Properties:

@@ -4,5 +4,5 @@ module.exports = {
 	Username: '${Username}', // Your Username here
 	Password: '${Password}', // Your Password here
 	IdentityPoolId: '${IdentityPoolId}', // Your IdentityPoolId here
-	Region: '${AWS_REGION}' // Your AWS Region here
+	Region: '${Region}' // Your AWS Region here
 }

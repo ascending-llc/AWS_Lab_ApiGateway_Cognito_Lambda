@@ -70,4 +70,25 @@ Deploy the **ApiGateway_Lambda.yaml** file in cloudformation folder with AWS Clo
 
 ### Add AWS Cognito as authorizor
 
-Update current Cloudformation Template with **ApiGateway_Lambda_Cognito.yaml**, try revisiting the URL and you will get an unauthorized message.
+Update current Cloudformation Template with **ApiGateway_Lambda_Cognito.yaml**, try refreshing the URL and you will get an unauthorized message.
+
+### Set up Mocking Frontend Page to Login In
+
+Change directory to ./cognito, install [nvm](https://github.com/creationix/nvm). Then run:
+
+```bash
+nvm install 10 && nvm use --delete-prefix v10.8.0
+```
+
+Then run:
+```bash
+npm install
+```
+
+**warning: For current version "amazon-cognito-identity-js": "^2.0.20", Please go into ./node_modules/amazon-cognito-identity-js/lib/Client.js, and add a new line in the 5th line**
+
+```java
+var fetch = require('node-fetch');
+```
+
+All set! We have a simple frontend page now, therefore we can mock the sign in process.

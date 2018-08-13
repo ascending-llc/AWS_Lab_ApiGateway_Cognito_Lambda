@@ -4,15 +4,15 @@ ApiGateway Integrated with Cognito and Lambda
 In ths lab:
 
 
-* Migrate your containerized application to serverless
+* Long term solution for migrate your legacy application to serverless
 
-	* Micro-Service Java Application running on EKS
+	* Migrating Java Application to micro-service running on EKS
 
-	* Develop your own lambda function
+	* Moving some features to serveless lambda function
 
-	* Integration of ApiGateway and Lambda function
+	* Dispatch portion ApiGateway path to serverless lamda function
 
-	* Amazon Cognito: Sing-up and Sign-in
+	* Demo Sign-up and Sign-in api path from Amazon Cognito in new serveless architecture to work with legacy application
 
 - - -
 
@@ -64,9 +64,10 @@ In this simple case, the api returns visitors' IP address.
 
 # Integrate ApiGateway and Lambda function with Cloudformation
 
-Deploy the **ApiGateway_Lambda.yaml** file in cloudformation folder with AWS CloudFormation. An Invoke URL will be found in Outputs Part, which will trigger lambda function and return visitors' current IP address.
+1. Deploy the **ApiGateway_Lambda.yaml** file in cloudformation folder with AWS CloudFormation. An Invoke URL will be found in Outputs Part, which will trigger lambda function and return visitors' current IP address.
+2. with cognitio
 
-# Leverage Cognito as sign-up and sign-in tools
+## Leverage Cognito as sign-up and sign-in tools
 
 ### Add AWS Cognito as authorizor
 

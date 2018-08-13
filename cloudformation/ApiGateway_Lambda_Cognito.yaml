@@ -1,6 +1,18 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Create an intergrated ApiGateway with Lambda function.
+Description: Create an intergrated ApiGateway with Lambda function, which will be authorized by AWS Cognito.
+Parameters:
+  EmailAddress:
+    Type: String
+    Description: The Email address to receive invitation message
+  DomainName:
+    Type: String
+    Description: The Prefix of Domain Name
+    Default: frugalops
+  CallbackURL:
+    Type: String
+    Description: The Call back URL used for Cognito, it must be start with 'https://' or 'http://'
+    Default: https://frugalops.com
 Resources:
   LambdaRole:
     Type: AWS::IAM::Role
@@ -110,11 +122,6 @@ Resources:
                 - "cognito-identity.amazonaws.com"
             Action: 
               - "sts:AssumeRoleWithWebIdentity"
-            # Condition:
-            #   StringEquals:
-            #     - "cognito-identity.amazonaws.com:aud": !Ref ApiIdentityPool
-            #   ForAnyValue:StringLike:
-            #     - "cognito-identity.amazonaws.com:amr": "authenticated"
       Policies:
         - 
           PolicyName: "CognitoRolePolicy"
@@ -133,6 +140,16 @@ Resources:
       IdentityPoolId: !Ref ApiIdentityPool
       Roles:
         authenticated: !GetAtt CognitoRole.Arn
+  CognitoUser:
+    Type: AWS::Cognito::UserPoolUser
+    Properties:
+      DesiredDeliveryMediums:
+        - EMAIL
+      Username: admin
+      UserPoolId: !Ref ApiUserPool
+      UserAttributes:
+        - Name: email
+          Value: !Ref EmailAddress
   ApiAuthorizer:
     Type: AWS::ApiGateway::Authorizer
     Properties:
@@ -160,6 +177,11 @@ Outputs:
   SignUpPage:
     Value: !Join
              - ''
-             - - https://frugalops.auth.us-east-1.amazoncognito.com/login?response_type=code&client_id=
+             - - https://
+               - !Ref DomainName
+               - .auth.
+               - !Ref AWS::Region
+               - .amazoncognito.com/login?response_type=code&client_id=
                - !Ref ApiUserPoolClient
-               - '&redirect_uri=https://www.frugalops.com'
+               - '&redirect_uri='
+               - !Ref CallbackURL

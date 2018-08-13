@@ -70,7 +70,23 @@ Deploy the **ApiGateway_Lambda.yaml** file in cloudformation folder with AWS Clo
 
 ### Add AWS Cognito as authorizor
 
-Update current Cloudformation Template with **ApiGateway_Lambda_Cognito.yaml**, try refreshing the URL and you will get an unauthorized message.
+Update current Cloudformation Template with **ApiGateway_Lambda_Cognito.yaml**, In **Parameters** part, fill out your email address, the prefix of domain you want to use, and the callback URL after sign-in.
+
+After the cloudformation is updated, please try refreshing the URL and you will get an unauthorized error message.
+
+### Integration of client and Cognito User Pool
+
+Go to AWS Cognito Service. In User Pools, clicke **App client settings** in left side. On this page, check box of **Cognito User Pool**, fill out **Callback URL**, and Check all boxes in the bottom **except** Client credentials.
+
+Then click **choose domain name** in the lower right.
+
+Enter Domain prefix in this page, check availability and save changes.
+
+### Sign-in and change password.
+
+You can use SignUpPage in Outputs part to login in, the intial username (admin default) and password has been sent to your email address.
+
+After the first login in, you will be asked to change password, and the status of user will transfer to confirmed.
 
 ### Set up Mocking Frontend Page to Login In
 
@@ -92,3 +108,17 @@ var fetch = require('node-fetch');
 ```
 
 All set! We have a simple frontend page now, therefore we can mock the sign in process.
+
+### Implement Cognito as authorizor tool of ApiGateway
+
+Fill the config.js in ./cognito/ with output information from Cloudformation. If everything is set correctly, you will successfully log in and get a JWT.
+
+Run this command to implement the JWT and you will get a correct response. Please replace ${JWT} and ${InvokeURL} with proper value.
+```bash
+curl -H "Authorization: ${JWT}" -X GET ${InvokeURL}
+```
+
+Try this command without JWT and you will get unauthorization message, which indicates the cognito works very well.
+```bash
+curl -X GET ${InvokeURL}
+```

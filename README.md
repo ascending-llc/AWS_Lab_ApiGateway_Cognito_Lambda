@@ -20,6 +20,8 @@ Prerequisites
 ====================
 
 Readers are assumed to have your own [AWS EKS Cluster](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and at least one node runs on it (The node should have a public IP). A PostgreSQL RDS that can be accessible by node is also required in this tutorial.
+
+Also, correct installation and confiuration of [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/installing.html) is required locally before we start this tutorial.
 - - -
 
 # Containerized Application
@@ -40,7 +42,7 @@ kubectl expose deployment sample --name=sample --port=80 --target-port=8080 --ty
 ```bash
 kubectl get service sample
 ```
-Then you can access the **http://${PublicIP}:${NodePort}/api/cars** via Postman, in GET method and POST method.
+Then you can access the **http://${PublicIP}:${NodePort}/api/cars** via [Postman](https://www.getpostman.com/) or **curl** command, in GET method and POST method.
 
 A POST method body sample is like:
 
@@ -50,7 +52,8 @@ A POST method body sample is like:
  	"model": "XE"
  }
 ```
-# Develop and test Lambda function
+
+# Develop and test Lambda function locally (Optional)
 
 Now, a new feature, for example a public IP query, needs to be added into the existing server. It can be done by lambda function.
 
@@ -64,62 +67,68 @@ In this simple case, the api returns visitors' IP address.
 
 # Integrate ApiGateway and Lambda function with Cloudformation
 
-1. Deploy the **ApiGateway_Lambda.yaml** file in cloudformation folder with AWS CloudFormation. An Invoke URL will be found in Outputs Part, which will trigger lambda function and return visitors' current IP address.
-2. with cognitio
-
-## Leverage Cognito as sign-up and sign-in tools
+1. Deploy the [ApiGateway_Lambda.yaml](https://raw.githubusercontent.com/overtureLLC/AWS_Lab_ApiGateway_Cognito_Lambda/master/cloudformation/ApiGateway_Lambda.yaml) file in cloudformation folder with AWS CloudFormation. An Invoke URL will be found in Outputs Part, which will trigger lambda function and return visitors' current IP address.
+2. Please follow these steps to leverage Cognito as sign-up and sign-in tools with ApiGateway
 
 ### Add AWS Cognito as authorizor
 
-Update current Cloudformation Template with **ApiGateway_Lambda_Cognito.yaml**, In **Parameters** part, fill out your email address, the prefix of domain you want to use, and the callback URL after sign-in.
+Update current Cloudformation Template with [ApiGateway_Lambda_Cognito.yaml](https://raw.githubusercontent.com/overtureLLC/AWS_Lab_ApiGateway_Cognito_Lambda/master/cloudformation/ApiGateway_Lambda_Cognito.yaml), In **Parameters** part, fill out your email address, the prefix of domain you want to use, and the callback URL after sign-in.
 
 After the cloudformation is updated, please try refreshing the URL and you will get an unauthorized error message.
 
 ### Integration of client and Cognito User Pool
 
-Go to AWS Cognito Service. In User Pools, clicke **App client settings** in left side. On this page, check box of **Cognito User Pool**, fill out **Callback URL**, and Check all boxes in the bottom **except** Client credentials.
+You can find all ${Variable} in **Parameter** or **Outputs** part of Cloudformation template.
 
-Then click **choose domain name** in the lower right.
+Please run this command in your working computer.
 
-Enter Domain prefix in this page, check availability and save changes.
+```bash
+aws cognito-idp update-user-pool-client --supported-identity-providers COGNITO --user-pool-id ${user_pool_id} --client-id ${client_id} --callback-urls '["${callbackURL}"]' --allowed-o-auth-flows code implicit --allowed-o-auth-scopes phone email openid aws.cognito.signin.user.admin profile
+```
+
+Then run this command:
+
+```bash
+aws cognito-idp create-user-pool-domain --domain ${domain_prefix} --user-pool-id ${user_pool_id}
+```
 
 ### Sign-in and change password.
 
-You can use SignUpPage in Outputs part to login in, the intial username (admin default) and password has been sent to your email address.
+You can use SignUpPage in Outputs part to login in, the intial username (admin by default) and password has been sent to your email address.
 
 After the first login in, you will be asked to change password, and the status of user will transfer to confirmed.
 
 ### Set up Mocking Frontend Page to Login In
 
-Change directory to ./cognito, install [nvm](https://github.com/creationix/nvm). Then run:
+run folloing command and then unzip the LoginIn.zip
+
+```bash
+curl -o LoginIn.zip https://s3.amazonaws.com/ascending-devops/cognito/cognito.zip
+```
+
+Install [nvm](https://github.com/creationix/nvm). Change directory to ./LoginIn, Then run
 
 ```bash
 nvm install 10 && nvm use --delete-prefix v10.8.0
 ```
-
-Then run:
-```bash
-npm install
-```
-
-**warning: For current version "amazon-cognito-identity-js": "^2.0.20", Please go into ./node_modules/amazon-cognito-identity-js/lib/Client.js, and add a new line in the 5th line**
-
-```java
-var fetch = require('node-fetch');
-```
-
 All set! We have a simple frontend page now, therefore we can mock the sign in process.
 
 ### Implement Cognito as authorizor tool of ApiGateway
 
-Fill the config.js in ./cognito/ with output information from Cloudformation. If everything is set correctly, you will successfully log in and get a JWT.
+Fill the config.js in ./LoginIn/ with output information from Cloudformation. If everything is set correctly, you will be able to successfully log in and get a JWT.
 
-Run this command to implement the JWT and you will get a correct response. Please replace ${JWT} and ${InvokeURL} with proper value.
+Run this command to implement the JWT and you will get a correct response. 
+
+```bash
+node TokenGenerator.js
+```
+
+Please replace ${JWT} and ${InvokeURL} with proper value.
 ```bash
 curl -H "Authorization: ${JWT}" -X GET ${InvokeURL}
 ```
 
-Try this command without JWT and you will get unauthorization message, which indicates the cognito works very well.
+Try this command without JWT and you will get unauthorization message, which indicates the cognito works well as an authorizor method.
 ```bash
 curl -X GET ${InvokeURL}
 ```

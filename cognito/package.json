@@ -9,7 +9,7 @@
   "author": "Yi Le",
   "license": "ISC",
   "dependencies": {
-    "amazon-cognito-identity-js": "^2.0.20",
+    "amazon-cognito-identity-js": "^2.0.21",
     "aws-sdk": "^2.289.0",
     "node-fetch": "^2.2.0"
   }

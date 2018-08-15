@@ -51,7 +51,21 @@ cognitoUser.authenticateUser(authenticationDetails, {
             }
         });
     },
+
     onFailure: function(err) {
         console.log(err.message + JSON.stringify(err));
     },
+
+    newPasswordRequired: function(userAttributes, requiredAttributes) {
+
+        delete userAttributes.email_verified;
+
+        // var UserAtt = {
+        //     Name : 'email_verified',
+        //     Value : 'leyi@frugalops.com' // your email here
+        // };
+
+        console.log('Your password will be changed');
+        cognitoUser.completeNewPasswordChallenge(config.NewPassword, userAttributes, this);
+    }
 });

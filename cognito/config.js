@@ -3,6 +3,7 @@ module.exports = {
 	ClientId : '${ClientId}', // Your client id here
 	Username: '${Username}', // Your Username here
 	Password: '${Password}', // Your Password here
+	NewPassword: '${NewPassword}', // Your new Password here
 	IdentityPoolId: '${IdentityPoolId}', // Your IdentityPoolId here
 	Region: '${Region}' // Your AWS Region here
 }

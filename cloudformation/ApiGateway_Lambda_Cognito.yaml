@@ -5,14 +5,6 @@ Parameters:
   EmailAddress:
     Type: String
     Description: The Email address to receive invitation message
-  DomainName:
-    Type: String
-    Description: The Prefix of Domain Name
-    Default: frugalops
-  CallbackURL:
-    Type: String
-    Description: The Call back URL used for Cognito, it must be start with 'https://' or 'http://'
-    Default: https://frugalops.com
 Resources:
   LambdaRole:
     Type: AWS::IAM::Role
@@ -174,14 +166,3 @@ Outputs:
     Value: !Ref ApiUserPoolClient
   IdentityPoolId:
     Value: !Ref ApiIdentityPool
-  SignUpPage:
-    Value: !Join
-             - ''
-             - - https://
-               - !Ref DomainName
-               - .auth.
-               - !Ref AWS::Region
-               - .amazoncognito.com/login?response_type=code&client_id=
-               - !Ref ApiUserPoolClient
-               - '&redirect_uri='
-               - !Ref CallbackURL

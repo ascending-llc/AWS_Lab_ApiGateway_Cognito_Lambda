@@ -76,28 +76,6 @@ Update current Cloudformation Template with [ApiGateway_Lambda_Cognito.yaml](htt
 
 After the cloudformation is updated, please try refreshing the URL and you will get an unauthorized error message.
 
-### Integration of client and Cognito User Pool
-
-You can find all ${Variable} in **Parameter** or **Outputs** part of Cloudformation template.
-
-Please run this command in your working computer.
-
-```bash
-aws cognito-idp update-user-pool-client --supported-identity-providers COGNITO --user-pool-id ${user_pool_id} --client-id ${client_id} --callback-urls '["${callbackURL}"]' --allowed-o-auth-flows code --allowed-o-auth-scopes phone email openid aws.cognito.signin.user.admin profile
-```
-
-Then run this command:
-
-```bash
-aws cognito-idp create-user-pool-domain --domain ${domain_prefix} --user-pool-id ${user_pool_id}
-```
-
-### Sign-in and change password.
-
-You can use SignUpPage in Outputs part to login in, the intial username (admin by default) and password has been sent to your email address.
-
-After the first login in, you will be asked to change password, and the status of user will transfer to confirmed.
-
 ### Set up Mocking Frontend Page to Login In
 
 run folloing command and then unzip the LoginIn.zip
@@ -115,7 +93,7 @@ All set! We have a simple frontend page now, therefore we can mock the sign in p
 
 ### Implement Cognito as authorizor tool of ApiGateway
 
-Fill the config.js in ./LoginIn/ with output information from Cloudformation. If everything is set correctly, you will be able to successfully log in and get a JWT.
+Fill the config.js in ./LoginIn/ with output information from Cloudformation. For the initial login, a new password will be reuqired in NewPassword field. If everything is set correctly, you will be able to successfully log in and get a JWT.
 
 Run this command to implement the JWT and you will get a correct response. 
 

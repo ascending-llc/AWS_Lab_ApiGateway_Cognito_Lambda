@@ -44,8 +44,6 @@ cognitoUser.authenticateUser(authenticationDetails, {
             if (error) {
                 console.error(error);
             } else {
-                     // Instantiate aws sdk service objects now that the credentials have been updated.
-                     // example: var s3 = new AWS.S3();
                 console.log('Successfully logged!');
                 console.log(result.getIdToken().getJwtToken());
             }
@@ -59,11 +57,6 @@ cognitoUser.authenticateUser(authenticationDetails, {
     newPasswordRequired: function(userAttributes, requiredAttributes) {
 
         delete userAttributes.email_verified;
-
-        // var UserAtt = {
-        //     Name : 'email_verified',
-        //     Value : 'leyi@frugalops.com' // your email here
-        // };
 
         console.log('Your password will be changed');
         cognitoUser.completeNewPasswordChallenge(config.NewPassword, userAttributes, this);

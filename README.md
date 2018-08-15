@@ -83,7 +83,7 @@ You can find all ${Variable} in **Parameter** or **Outputs** part of Cloudformat
 Please run this command in your working computer.
 
 ```bash
-aws cognito-idp update-user-pool-client --supported-identity-providers COGNITO --user-pool-id ${user_pool_id} --client-id ${client_id} --callback-urls '["${callbackURL}"]' --allowed-o-auth-flows code implicit --allowed-o-auth-scopes phone email openid aws.cognito.signin.user.admin profile
+aws cognito-idp update-user-pool-client --supported-identity-providers COGNITO --user-pool-id ${user_pool_id} --client-id ${client_id} --callback-urls '["${callbackURL}"]' --allowed-o-auth-flows code --allowed-o-auth-scopes phone email openid aws.cognito.signin.user.admin profile
 ```
 
 Then run this command:

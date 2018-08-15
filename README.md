@@ -78,22 +78,22 @@ After the cloudformation is updated, please try refreshing the URL and you will 
 
 ### Set up Mocking Frontend Page to Login In
 
-run folloing command and then unzip the LoginIn.zip
-
+run folloing command 
 ```bash
-curl -o LoginIn.zip https://s3.amazonaws.com/ascending-devops/cognito/cognito.zip
+curl -o LoginIn.zip https://s3.amazonaws.com/ascending-devops/cognito/LoginIn.zip && mkdir LoginIn && unzip LoginIn.zip -d ./LoginIn
 ```
 
-Install [nvm](https://github.com/creationix/nvm). Change directory to ./LoginIn, Then run
+Change directory to ./LoginIn, then install [nvm](https://github.com/creationix/nvm). Run
 
 ```bash
 nvm install 10 && nvm use --delete-prefix v10.8.0
 ```
-All set! We have a simple frontend page now, therefore we can mock the sign in process.
+
+All set! We have a simple frontend page now, therefore we can mock the sign-in process.
 
 ### Implement Cognito as authorizor tool of ApiGateway
 
-Fill the config.js in ./LoginIn/ with output information from Cloudformation. For the initial login, a new password will be reuqired in NewPassword field. If everything is set correctly, you will be able to successfully log in and get a JWT.
+Fill the config.js in ./LoginIn/ with output information from Cloudformation. For the first login, a new password will be reuqired in NewPassword field. If everything is set correctly, you will be able to successfully log in and get a JWT.
 
 Run this command to implement the JWT and you will get a correct response. 
 

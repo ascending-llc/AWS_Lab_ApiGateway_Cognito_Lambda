@@ -19,12 +19,13 @@ In ths lab:
 Prerequisites
 ====================
 
-Readers are assumed to have your own [AWS EKS Cluster](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and at least one node runs on it (The node should have a public IP). A PostgreSQL RDS that can be accessible by node is also required in this tutorial.
+Installation of [nvm](https://github.com/creationix/nvm) is required before we start this tutorial.
 
-Also, correct installation and confiuration of [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/installing.html) is required locally before we start this tutorial.
 - - -
 
-# Containerized Application
+# Containerized Application (Optional)
+
+Readers are assumed to have your own [AWS EKS Cluster](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and at least one node runs on it (The node should have a public IP). A PostgreSQL RDS that can be accessible by node is also required in this optional part.
 
 ### Deploy server in pods
 
@@ -78,7 +79,7 @@ After the cloudformation is updated, please try refreshing the URL and you will 
 
 ### Set up Mocking Frontend Page to Login In
 
-run folloing command 
+Run folloing command 
 ```bash
 curl -o Login.zip https://s3.amazonaws.com/ascending-devops/cognito/Login.zip && mkdir Login && unzip Login.zip -d ./Login
 ```
@@ -93,7 +94,7 @@ All set! We have a simple frontend page now, therefore we can mock the sign-in p
 
 ### Implement Cognito as authorizor tool of ApiGateway
 
-Fill the config.js in ./Login/ with output information from Cloudformation. For the first login, a new password will be reuqired in NewPassword field. If everything is set correctly, you will be able to successfully log in and get a JWT.
+Fill the **config.js** in ./Login/ with output information from Cloudformation. At the first login, a new password will be reuqired in NewPassword field. If everything is set correctly, you will be able to successfully log in and get a JWT.
 
 Run this command to implement the JWT and you will get a correct response. 
 
